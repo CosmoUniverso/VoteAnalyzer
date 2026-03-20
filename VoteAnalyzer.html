@@ -150,6 +150,21 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
   opacity:0;transition:all .25s;pointer-events:none}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 button:active{opacity:.85}
+/* COMPAGNI */
+.peer-row{background:var(--surf);border-radius:14px;padding:11px 14px;margin-bottom:8px;border:1px solid var(--brd);display:flex;align-items:center;gap:12px}
+.peer-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;font-family:var(--fd);flex-shrink:0}
+.peer-name{font-weight:600;font-size:15px}
+.peer-meta{font-size:11px;color:var(--mut);margin-top:2px}
+.peer-avg{font-family:var(--fd);font-weight:800;font-size:22px;margin-left:auto;flex-shrink:0}
+.cmp-bar-wrap{margin-bottom:10px}
+.cmp-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.cmp-bar-label{font-size:12px;font-weight:600;min-width:90px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmp-bar-track{flex:1;background:#252645;border-radius:4px;height:10px;overflow:hidden}
+.cmp-bar-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.cmp-bar-val{font-size:12px;font-weight:700;min-width:36px;text-align:right;font-family:var(--fd)}
+.subtab-bar{display:flex;background:var(--surf);border-radius:22px;padding:4px;gap:2px;margin-bottom:14px}
+.subtab{flex:1;padding:8px 4px;border-radius:18px;border:none;cursor:pointer;font-size:12px;font-weight:700;background:transparent;color:var(--mut);font-family:var(--ff);transition:all .2s;text-align:center}
+.subtab.on{background:var(--acc);color:#0b0c18}
 /* FILTER BAR */
 .fbar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;align-items:center}
 .fchip{padding:5px 13px;border-radius:20px;border:1px solid var(--brd);background:transparent;
@@ -254,6 +269,13 @@ button:active{opacity:.85}
 
   <!-- ANDAMENTO -->
   <div id="p-andamento" class="page">
+    <div class="subtab-bar">
+      <button class="subtab on" id="stab-trend">Andamento</button>
+      <button class="subtab"    id="stab-compagni">Compagni</button>
+    </div>
+
+    <!-- TREND VIEW -->
+    <div id="and-trend-view">
     <div id="and-empty" class="empty" style="display:none"><div class="ei">📈</div><div class="et">Nessun dato</div><div class="es">Importa voti di almeno un anno scolastico per vedere l'andamento</div></div>
     <div id="and-cont">
       <div class="card" style="background:linear-gradient(135deg,var(--surf),#1f2040);text-align:center;padding:18px 16px">
@@ -290,7 +312,60 @@ button:active{opacity:.85}
       </div>
       <div id="anni-list"></div>
     </div>
-  </div>
+    </div><!-- /and-trend-view -->
+
+    <!-- COMPAGNI VIEW -->
+    <div id="and-compagni-view" style="display:none">
+      <div class="stitle">FILTRI CONFRONTO</div>
+      <div class="fbar" style="margin-bottom:4px" id="cmp-anni-bar"></div>
+      <div class="fbar" style="margin-bottom:14px">
+        <button class="fchip on" id="cmpq0">Tutti</button>
+        <button class="fchip"    id="cmpq1">1° Quad</button>
+        <button class="fchip"    id="cmpq2">2° Quad</button>
+      </div>
+
+      <div class="stitle">MEDIA GENERALE</div>
+      <div class="card" style="padding:14px 16px">
+        <div id="cmp-overall"></div>
+      </div>
+
+      <div class="card">
+        <div class="stitle">CONFRONTO PER MATERIA</div>
+        <div style="position:relative;height:260px"><canvas id="cc-subj"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="stitle">DISTRIBUZIONE VOTI</div>
+        <div style="position:relative;height:180px"><canvas id="cc-dist"></canvas></div>
+      </div>
+
+      <div class="stitle">COMPAGNI</div>
+      <div id="peers-list"></div>
+
+      <div class="stitle">AGGIUNGI COMPAGNO</div>
+      <div class="card" style="padding:14px">
+        <div class="fg" style="margin-bottom:10px">
+          <label class="flbl">NOME</label>
+          <input type="text" id="peer-name-inp" placeholder="es. Marco R.">
+        </div>
+        <div class="fg" style="margin-bottom:10px">
+          <label class="flbl">ANNO (opzionale, sovrascrive il CSV)</label>
+          <input type="text" id="peer-anno-inp" placeholder="es. 2025/26">
+        </div>
+        <button class="abtn" id="btnAddPeer" style="width:100%;justify-content:center">Importa CSV compagno</button>
+        <input id="fi-peer" type="file" accept=".csv,.json" style="display:none">
+      </div>
+
+      <div class="card" style="padding:14px;margin-bottom:20px">
+        <div style="font-size:12px;color:var(--mut);line-height:1.7;margin-bottom:12px">
+          Per confrontarti con un compagno, chiedigli di esportare i suoi voti dalla VotiApp
+          (Home → Esporta CSV) e mandateli a vicenda. Importali qui con il suo nome.
+        </div>
+        <button class="abtn" id="btnExpForPeer" style="width:100%;justify-content:center">Esporta il mio CSV da condividere</button>
+      </div>
+    </div><!-- /and-compagni-view -->
+
+  </div><!-- /p-andamento -->
 
 </div>
 
@@ -341,4 +416,885 @@ button:active{opacity:.85}
     </div>
     <div class="fg"><label class="flbl">QUADRIMESTRE</label>
       <div class="qcs">
-        <button class="
+        <button class="qc on" id="qc1">1° Quadrimestre</button>
+        <button class="qc"    id="qc2">2° Quadrimestre</button>
+      </div>
+    </div>
+    <div class="fg"><label class="flbl">DATA</label><input type="date" id="fd"></div>
+    <div class="fg"><label class="flbl">ANNO SCOLASTICO</label><input type="text" id="fanno" placeholder="es. 2024/25"></div>
+    <div class="fg"><label class="flbl">NOTE (opzionale)</label><input type="text" id="fn" placeholder="Interrogazione, compito…"></div>
+    <div class="fg"><label class="flbl">PESO (%)</label><div style="display:flex;gap:8px;align-items:center"><input type="number" id="fp" min="1" max="100" step="1" value="100" style="flex:1"><div style="display:flex;gap:6px;flex-wrap:wrap" id="peso-btns"></div></div></div>
+    <button class="sbmt" id="btnSubmit">✓ Aggiungi Voto</button>
+  </div>
+</div>
+
+<!-- CLASSEVIVA MODAL -->
+<div id="mcv" class="cov">
+  <div class="cbox">
+    <div style="text-align:center;margin-bottom:16px"><div style="font-size:48px">🏫</div><div style="font-family:var(--fd);font-weight:700;font-size:20px;margin-top:8px">ClasseViva</div></div>
+    <div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="color:#f87171;font-weight:700;font-size:13px;margin-bottom:6px">⚠️ API non ufficiale</div>
+      <div style="color:#aaaacc;font-size:13px;line-height:1.65">ClasseViva (Spaggiari) non ha un'API pubblica ufficiale. API di terze parti potrebbero violare i Termini di Servizio.</div>
+    </div>
+    <div style="background:rgba(79,121,243,.12);border:1px solid rgba(79,121,243,.3);border-radius:12px;padding:12px;margin-bottom:20px">
+      <div style="color:#7ba8f7;font-size:13px;font-weight:600;margin-bottom:4px">💡 Alternativa</div>
+      <div style="color:#8888aa;font-size:13px">Esporta il CSV da ClasseViva e importalo qui con il pulsante "Importa".</div>
+    </div>
+    <button id="btnCloseCV" style="width:100%;padding:13px;background:#252645;border:none;border-radius:12px;color:var(--txt);cursor:pointer;font-weight:600;font-size:15px;font-family:var(--ff)">Capito</button>
+  </div>
+</div>
+
+<script>
+(function(){
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+var G=[], CQ=0, CT='home', FQ=1, BC=null, LC=null;
+var GF_ANNI=[], GF_QUAD=0;
+var AND_QMODE='all';
+var AND_VIEW='trend';   // trend | compagni
+var PEERS=[];           // [{id,name,grades:[]}]
+var CC=null;            // compagni chart instance
+var CMP_ANNO='';        // selected anno for compagni filter
+var CMP_QUAD=0;
+var YEAR_COLORS=['#f5c842','#7ba8f7','#a78bfa','#34d399','#fb923c','#f472b6','#38bdf8','#4ade80'];
+var GC={10:'#22c55e',9.5:'#2dd46a',9:'#4ade80',8.5:'#a3f0be',8:'#86efac',7.5:'#fcd34d',7:'#fbbf24',6.5:'#fd9b52',6:'#fb923c',5.5:'#fb8080',5:'#f87171',4.5:'#f36060',4:'#ef4444',3.5:'#e33030',3:'#dc2626',2.5:'#c82020',2:'#b91c1c',1.5:'#9f1515',1:'#7f1d1d'};
+
+// ── STORAGE ───────────────────────────────────────────────────────────────────
+function loadData(){try{var r=localStorage.getItem('va1');if(r)G=JSON.parse(r);}catch(e){G=[];}}
+function saveData(){try{localStorage.setItem('va1',JSON.stringify(G));}catch(e){}}
+function loadPeers(){try{var r=localStorage.getItem('va1-peers');if(r)PEERS=JSON.parse(r);}catch(e){PEERS=[];}}
+function savePeers(){try{localStorage.setItem('va1-peers',JSON.stringify(PEERS));}catch(e){}}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+function average(arr){if(!arr.length)return null;var sw=0,swv=0;arr.forEach(function(g){var w=g.peso!=null?g.peso:100;swv+=g.value*w;sw+=w;});return sw>0?swv/sw:null;}
+function fmtV(v){if(v===null||v===undefined)return'—';var r=v.toFixed(2);return r.endsWith('.00')?v.toFixed(0):r;}
+function gradeColor(v){if(!v&&v!==0)return'#6b7280';if(v>=9.5)return'#22c55e';if(v>=8.5)return'#86efac';if(v>=7.5)return'#fbbf24';if(v>=5.5)return'#fb923c';return'#ef4444';}
+function gradeColorExact(v){return GC[Math.round(v)]||'#6b7280';}
+function getFiltered(){return CQ===0?G:G.filter(function(g){return g.quadrimestre===CQ;});}
+function todayStr(){return new Date().toISOString().split('T')[0];}
+function getDist(arr){
+  var tot=arr.length,map={};
+  var steps=[1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10];
+  steps.forEach(function(s){map[s]=0;});
+  arr.forEach(function(g){var r=Math.round(g.value*2)/2;if(r<1)r=1;if(r>10)r=10;map[r]++;});
+  var res=[];
+  for(var i=steps.length-1;i>=0;i--){var s=steps[i];res.push({grade:s,count:map[s],pct:tot?((map[s]/tot)*100).toFixed(1):'0.0'});}
+  return res;
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function guesAnno(dateStr){
+  if(!dateStr)return'';
+  var d=new Date(dateStr),m=d.getMonth()+1,y=d.getFullYear();
+  if(m>=9)return y+'/'+(String(y+1).slice(-2));
+  else return(y-1)+'/'+(String(y).slice(-2));
+}
+function getYears(){
+  var set={};G.forEach(function(g){if(g.anno)set[g.anno]=1;});
+  return Object.keys(set).sort();
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function showToast(msg){
+  var el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('on');
+  clearTimeout(el._t);
+  el._t=setTimeout(function(){el.classList.remove('on');},2800);
+}
+
+// ── MODALS ────────────────────────────────────────────────────────────────────
+function openModal(id){document.getElementById(id).classList.add('on');}
+function closeModal(id){document.getElementById(id).classList.remove('on');}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function goTab(name){
+  CT=name;
+  ['home','voti','grafici','andamento'].forEach(function(t){
+    var nb=document.getElementById('nb-'+t);
+    var pg=document.getElementById('p-'+t);
+    if(nb)nb.classList.toggle('on',t===name);
+    if(pg)pg.classList.toggle('on',t===name);
+  });
+  render();
+}
+
+// ── QUAD FILTER ───────────────────────────────────────────────────────────────
+function setQuad(q){
+  CQ=q;
+  [0,1,2].forEach(function(i){
+    var el=document.getElementById('qt'+i);
+    if(el)el.classList.toggle('on',i===q);
+  });
+  render();
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render(){
+  if(CT==='home')renderHome();
+  else if(CT==='voti')renderVoti();
+  else if(CT==='grafici')renderGrafici();
+  else if(CT==='andamento'){if(AND_VIEW==='trend')renderAndamento();else renderCompagni();}
+}
+
+function renderHome(){
+  var fg=getFiltered(),tot=fg.length,a=average(fg);
+  var lbl=CQ===0?'MEDIA GENERALE':'MEDIA '+CQ+'° QUADRIMESTRE';
+  document.getElementById('avglbl').textContent=lbl;
+  var el=document.getElementById('avgval');
+  el.textContent=a?a.toFixed(2):'—';el.style.color=gradeColor(a);
+  document.getElementById('avgsub').textContent=tot+' vot'+(tot===1?'o':'i')+' registrat'+(tot===1?'o':'i');
+
+  var g1=G.filter(function(g){return g.quadrimestre===1;}),g2=G.filter(function(g){return g.quadrimestre===2;});
+  var a1=average(g1),a2=average(g2);
+  var e1=document.getElementById('a1');e1.textContent=a1?a1.toFixed(2):'—';e1.style.color=gradeColor(a1);
+  var e2=document.getElementById('a2');e2.textContent=a2?a2.toFixed(2):'—';e2.style.color=gradeColor(a2);
+  document.getElementById('c1').textContent=g1.length+' vot'+(g1.length!==1?'i':'o');
+  document.getElementById('c2').textContent=g2.length+' vot'+(g2.length!==1?'i':'o');
+
+  var subjects=[];
+  fg.forEach(function(g){if(subjects.indexOf(g.subject)<0)subjects.push(g.subject);});
+  var avgs=subjects.map(function(s){
+    var sg=fg.filter(function(g){return g.subject===s;});
+    return{s:s,a:average(sg),n:sg.length};
+  }).sort(function(x,y){return(y.a||0)-(x.a||0);});
+
+  var ss=document.getElementById('ss'),sl=document.getElementById('sl');
+  if(avgs.length){
+    ss.style.display='block';
+    sl.innerHTML=avgs.map(function(x){
+      return'<div class="srow"><div><div class="sname">'+esc(x.s)+'</div><div class="scnt">'+x.n+' vot'+(x.n!==1?'i':'o')+'</div></div>'
+        +'<div class="savg" style="color:'+gradeColor(x.a)+'">'+(x.a?x.a.toFixed(2):'—')+'</div></div>';
+    }).join('');
+  }else{ss.style.display='none';}
+  document.getElementById('hempty').style.display=G.length===0?'block':'none';
+}
+
+function renderVoti(){
+  var fg=getFiltered().slice().sort(function(a,b){return new Date(b.date)-new Date(a.date);});
+  document.getElementById('vtitle').textContent=fg.length+' VOTI TOTALI';
+  var vl=document.getElementById('vlist'),ve=document.getElementById('vempty');
+  if(!fg.length){vl.innerHTML='';ve.style.display='block';return;}
+  ve.style.display='none';
+  vl.innerHTML=fg.map(function(g){
+    var c=gradeColorExact(g.value);
+    var chip=g.quadrimestre===1
+      ?'<span class="chip" style="background:rgba(30,58,138,.33);color:#93c5fd">Q1</span>'
+      :'<span class="chip" style="background:rgba(113,63,18,.33);color:#fcd34d">Q2</span>';
+    return'<div class="grow">'
+      +'<div class="gcirc" style="background:'+c+'22;border:2px solid '+c+';color:'+c+'">'+fmtV(g.value)+'</div>'
+      +'<div style="flex:1;min-width:0">'
+        +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap">'
+          +'<span class="gsub">'+esc(g.subject)+'</span>'+chip+'</div>'
+        +'<div class="gmeta"><span>📅 '+esc(g.date)+'</span>'+(g.note?'<span>📝 '+esc(g.note)+'</span>':'')+'<span>⚖️ '+(g.peso!=null?g.peso:100)+'%</span></div>'
+      +'</div>'
+      +'<button class="delbtn" data-id="'+g.id+'">🗑️</button>'
+    +'</div>';
+  }).join('');
+  // attach delete listeners
+  vl.querySelectorAll('.delbtn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var id=this.getAttribute('data-id');
+      G=G.filter(function(g){return g.id!==id;});
+      saveData();showToast('Voto eliminato');render();
+    });
+  });
+}
+
+function gfGetFiltered(){
+  // filter by GF_ANNI (empty = all years) + GF_QUAD
+  var base = GF_ANNI.length ? G.filter(function(g){return GF_ANNI.indexOf(g.anno||guesAnno(g.date))>=0;}) : G.slice();
+  if(GF_QUAD===1) base=base.filter(function(g){return g.quadrimestre===1;});
+  if(GF_QUAD===2) base=base.filter(function(g){return g.quadrimestre===2;});
+  return base;
+}
+
+function renderGrafici(){
+  var years=getYears();
+  var ge=document.getElementById('gempty'),gc=document.getElementById('gcont');
+
+  // build anno filter chips
+  var anniBar=document.getElementById('gf-anni');
+  anniBar.innerHTML=years.map(function(y,i){
+    var on=GF_ANNI.indexOf(y)>=0;
+    var c=YEAR_COLORS[i%YEAR_COLORS.length];
+    return'<button class="fchip'+(on?' on':'')+'" data-anno="'+y+'" style="'+(on?'border-color:'+c+';background:'+c+'22;color:'+c:'')+'">'+y+'</button>';
+  }).join('')+'<button class="fchip'+(GF_ANNI.length===0?' on':'')+'" id="gf-all-anni">Tutti gli anni</button>';
+
+  anniBar.querySelectorAll('[data-anno]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var y=this.dataset.anno, idx=GF_ANNI.indexOf(y);
+      if(idx>=0)GF_ANNI.splice(idx,1); else GF_ANNI.push(y);
+      renderGrafici();
+    });
+  });
+  var allBtn=document.getElementById('gf-all-anni');
+  if(allBtn)allBtn.addEventListener('click',function(){GF_ANNI=[];renderGrafici();});
+
+  // quad filter buttons
+  [0,1,2].forEach(function(q){
+    var b=document.getElementById('gfq'+q);
+    if(b){b.classList.toggle('on',GF_QUAD===q);b.onclick=function(){GF_QUAD=q;renderGrafici();};}
+  });
+
+  var fg=gfGetFiltered(),tot=fg.length;
+  if(!tot){ge.style.display='block';gc.style.display='none';if(BC){BC.destroy();BC=null;}return;}
+  ge.style.display='none';gc.style.display='block';
+
+  var a=average(fg);
+  var el=document.getElementById('gavg');el.textContent=a?a.toFixed(2):'—';el.style.color=gradeColor(a);
+  // label
+  var lparts=[];
+  if(GF_ANNI.length) lparts.push(GF_ANNI.join(', '));
+  if(GF_QUAD===1) lparts.push('1° Quadrimestre');
+  if(GF_QUAD===2) lparts.push('2° Quadrimestre');
+  document.getElementById('gsub2').textContent=tot+' voti'+(lparts.length?' · '+lparts.join(' · '):'');
+  var suff=fg.filter(function(g){return g.value>=6;}).length,ins=tot-suff;
+  document.getElementById('gsp').textContent=Math.round((suff/tot)*100)+'%';
+  document.getElementById('gip').textContent=Math.round((ins/tot)*100)+'%';
+  document.getElementById('gsc').textContent=suff+' voti ≥ 6';
+  document.getElementById('gic').textContent=ins+' voti < 6';
+  document.getElementById('gtot').textContent='TOT: '+tot;
+
+  // comparison bar (multiple years selected)
+  var cmpBar=document.getElementById('gf-compare-bar');
+  var multiYear = GF_ANNI.length>1;
+  cmpBar.style.display=multiYear?'flex':'none';
+
+  if(BC){BC.destroy();BC=null;}
+  var ctx=document.getElementById('bc').getContext('2d');
+
+  if(multiYear){
+    // grouped bar: one dataset per selected year
+    var allSteps=[1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10];
+    var datasets=GF_ANNI.map(function(y,i){
+      var yg=fg.filter(function(g){return(g.anno||guesAnno(g.date))===y;});
+      var map={};allSteps.forEach(function(s){map[s]=0;});
+      yg.forEach(function(g){var r=Math.round(g.value*2)/2;if(r>=1&&r<=10)map[r]++;});
+      var usedSteps=allSteps.filter(function(s){return map[s]>0;});
+      var c=YEAR_COLORS[i%YEAR_COLORS.length];
+      return{label:y,data:allSteps.map(function(s){return map[s];}),backgroundColor:c+'99',borderColor:c,borderWidth:1.5,borderRadius:4};
+    });
+    // only show steps that have at least 1 count in any dataset
+    var hasData=allSteps.map(function(s,si){return datasets.some(function(ds){return ds.data[si]>0;});});
+    var filteredSteps=allSteps.filter(function(_,i){return hasData[i];});
+    datasets.forEach(function(ds){ds.data=allSteps.filter(function(_,i){return hasData[i];}).map(function(_,fi){return ds.data[allSteps.indexOf(filteredSteps[fi])];});});
+    BC=new Chart(ctx,{
+      type:'bar',
+      data:{labels:filteredSteps,datasets:datasets},
+      options:{responsive:true,maintainAspectRatio:false,animation:{duration:400},
+        plugins:{legend:{display:true,labels:{color:'#e0e0f5',font:{size:11}}},tooltip:{
+          backgroundColor:'#1f2040',borderColor:'#252645',borderWidth:1,titleColor:'#e8e8f5',
+          callbacks:{title:function(i){return'Voto '+i[0].label;},label:function(i){return' '+i.dataset.label+': '+i.formattedValue+' voti';}}
+        }},
+        scales:{
+          x:{grid:{display:false},ticks:{color:'#6b6b8a'},border:{display:false}},
+          y:{grid:{color:'#252645'},ticks:{color:'#6b6b8a',precision:0},border:{display:false}}
+        }}
+    });
+    // comparison summary chips
+    cmpBar.innerHTML=GF_ANNI.map(function(y,i){
+      var yg=fg.filter(function(g){return(g.anno||guesAnno(g.date))===y;});
+      var a2=average(yg);var c=YEAR_COLORS[i%YEAR_COLORS.length];
+      return'<span class="fchip on" style="border-color:'+c+';background:'+c+'22;color:'+c+'">'+y+': '+(a2?a2.toFixed(2):'—')+'</span>';
+    }).join('');
+  } else {
+    var d=getDist(fg),cd=d.filter(function(x){return x.count>0;});
+    BC=new Chart(ctx,{
+      type:'bar',
+      data:{labels:cd.map(function(x){return x.grade;}),
+        datasets:[{data:cd.map(function(x){return x.count;}),
+          backgroundColor:cd.map(function(x){return GC[x.grade]||'#6b7280';}),
+          borderRadius:6,borderSkipped:false}]},
+      options:{responsive:true,maintainAspectRatio:false,animation:{duration:400},
+        plugins:{legend:{display:false},tooltip:{
+          backgroundColor:'#1f2040',borderColor:'#252645',borderWidth:1,titleColor:'#e8e8f5',bodyColor:'#8888aa',
+          callbacks:{title:function(i){return'Voto '+i[0].label;},
+            label:function(i){var x=cd[i.dataIndex];return' '+x.count+' vot'+(x.count!==1?'i':'o')+' ('+x.pct+'%)';}}
+        }},
+        scales:{
+          x:{grid:{display:false},ticks:{color:'#6b6b8a'},border:{display:false}},
+          y:{grid:{color:'#252645'},ticks:{color:'#6b6b8a',precision:0},border:{display:false}}
+        }}
+    });
+  }
+
+  var d2=getDist(fg);
+  document.getElementById('dtbl').innerHTML=d2.map(function(x){
+    var w=tot?((x.count/tot)*100)+'%':'0%';
+    return'<div class="drow" style="opacity:'+(x.count===0?'0.25':'1')+'">'
+      +'<span class="dgrade" style="color:'+(GC[x.grade]||'#6b7280')+'">'+x.grade+'</span>'
+      +'<div class="dbw"><div class="dbar" style="background:'+(GC[x.grade]||'#6b7280')+';width:'+w+'"></div></div>'
+      +'<span class="dcnt">'+x.count+'</span>'
+      +'<span class="dpct">'+x.pct+'%</span>'
+    +'</div>';
+  }).join('');
+}
+
+// ── ANDAMENTO ─────────────────────────────────────────────────────────────────
+var SELSUBJ=null;
+function renderAndamento(){
+  var years=getYears();
+  var ae=document.getElementById('and-empty'),ac=document.getElementById('and-cont');
+  if(!years.length){ae.style.display='block';ac.style.display='none';return;}
+  ae.style.display='none';ac.style.display='block';
+
+  // chips
+  var chips=document.getElementById('and-anni');
+  chips.innerHTML=years.map(function(y,i){
+    var c=YEAR_COLORS[i%YEAR_COLORS.length];
+    return'<span class="anno-chip" style="background:'+c+'22;border-color:'+c+';color:'+c+'">'+y+'</span>';
+  }).join('');
+
+  // quad mode buttons
+  ['all','q1','q2','cmp'].forEach(function(m){
+    var b=document.getElementById('aqm-'+m);
+    if(b){
+      b.classList.toggle('on',AND_QMODE===m);
+      b.onclick=function(){AND_QMODE=m;renderAndamento();};
+    }
+  });
+
+  // line chart general average (quad-mode aware)
+  if(LC){LC.destroy();LC=null;}
+  var ctx=document.getElementById('lc-gen').getContext('2d');
+  var datasets=[];
+  if(AND_QMODE==='compare'){
+    // two lines: Q1 and Q2
+    var d1=years.map(function(y){var yg=G.filter(function(g){return g.anno===y&&g.quadrimestre===1;});return yg.length?parseFloat(average(yg).toFixed(2)):null;});
+    var d2=years.map(function(y){var yg=G.filter(function(g){return g.anno===y&&g.quadrimestre===2;});return yg.length?parseFloat(average(yg).toFixed(2)):null;});
+    datasets=[
+      {label:'1° Quadrimestre',data:d1,borderColor:'#93c5fd',backgroundColor:'rgba(147,197,253,.1)',pointBackgroundColor:'#93c5fd',pointRadius:5,tension:.35,fill:false,borderWidth:2.5,spanGaps:true,borderDash:[]},
+      {label:'2° Quadrimestre',data:d2,borderColor:'#fcd34d',backgroundColor:'rgba(252,211,77,.1)',pointBackgroundColor:'#fcd34d',pointRadius:5,tension:.35,fill:false,borderWidth:2.5,spanGaps:true,borderDash:[6,3]}
+    ];
+  } else {
+    var qf=AND_QMODE==='q1'?1:(AND_QMODE==='q2'?2:0);
+    var lineData=years.map(function(y){
+      var yg=G.filter(function(g){return g.anno===y&&(qf===0||g.quadrimestre===qf);});
+      return yg.length?parseFloat(average(yg).toFixed(2)):null;
+    });
+    var lbl=qf===0?'Media generale':(qf===1?'1° Quadrimestre':'2° Quadrimestre');
+    var col=qf===0?'#f5c842':(qf===1?'#93c5fd':'#fcd34d');
+    datasets=[{label:lbl,data:lineData,borderColor:col,backgroundColor:col.replace('#','rgba(').replace(/(.{2})(.{2})(.{2})/,function(_,r,g2,b){return parseInt(r,16)+','+parseInt(g2,16)+','+parseInt(b,16)+','})+'0.15)',pointBackgroundColor:col,pointRadius:6,pointHoverRadius:8,tension:.35,fill:true,borderWidth:2.5,spanGaps:true}];
+  }
+  LC=new Chart(ctx,{
+    type:'line',
+    data:{labels:years,datasets:datasets},
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:400},
+      plugins:{legend:{display:AND_QMODE==='compare',labels:{color:'#e0e0f5',font:{size:11},boxWidth:24}},tooltip:{
+        backgroundColor:'#1f2040',borderColor:'#252645',borderWidth:1,
+        titleColor:'#e8e8f5',bodyColor:'#e0e0f5',
+        callbacks:{label:function(i){return' '+i.dataset.label+': '+i.formattedValue;}}
+      }},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#6b6b8a'},border:{display:false}},
+        y:{min:1,max:10,grid:{color:'#252645'},ticks:{color:'#6b6b8a'},border:{display:false}}
+      }
+    }
+  });
+
+  // subject selector
+  var allSubjs=[];
+  G.forEach(function(g){if(allSubjs.indexOf(g.subject)<0)allSubjs.push(g.subject);});
+  allSubjs.sort();
+  if(!SELSUBJ||allSubjs.indexOf(SELSUBJ)<0)SELSUBJ=allSubjs[0]||null;
+  var ss=document.getElementById('and-subj-sel');
+  ss.innerHTML=allSubjs.map(function(s){
+    return'<button class="qb'+(s===SELSUBJ?' on':'')+'" data-s="'+esc(s)+'">'+esc(s)+'</button>';
+  }).join('');
+  ss.querySelectorAll('.qb').forEach(function(b){
+    b.addEventListener('click',function(){SELSUBJ=this.dataset.s;renderAndamento();});
+  });
+
+  // subject line chart
+  var subjCanvas=document.getElementById('lc-subj');
+  var existChart=Chart.getChart(subjCanvas);if(existChart)existChart.destroy();
+  if(SELSUBJ){
+    var sData=years.map(function(y){
+      var yg=G.filter(function(g){return g.anno===y&&g.subject===SELSUBJ;});
+      return{y:y,a:yg.length?average(yg):null};
+    });
+    new Chart(subjCanvas.getContext('2d'),{
+      type:'line',
+      data:{
+        labels:sData.map(function(d){return d.y;}),
+        datasets:[{
+          label:SELSUBJ,
+          data:sData.map(function(d){return d.a?parseFloat(d.a.toFixed(2)):null;}),
+          borderColor:'#7ba8f7',backgroundColor:'rgba(123,168,247,.15)',
+          pointBackgroundColor:'#7ba8f7',pointRadius:6,pointHoverRadius:8,
+          tension:.35,fill:true,borderWidth:2.5,spanGaps:true
+        }]
+      },
+      options:{responsive:true,maintainAspectRatio:false,animation:{duration:400},
+        plugins:{legend:{display:false},tooltip:{
+          backgroundColor:'#1f2040',borderColor:'#252645',borderWidth:1,
+          titleColor:'#e8e8f5',bodyColor:'#7ba8f7',
+          callbacks:{label:function(i){return' Media: '+i.formattedValue;}}
+        }},
+        scales:{
+          x:{grid:{display:false},ticks:{color:'#6b6b8a'},border:{display:false}},
+          y:{min:1,max:10,grid:{color:'#252645'},ticks:{color:'#6b6b8a'},border:{display:false}}
+        }
+      }
+    });
+  }
+
+  // summary table with Q1/Q2 breakdown
+  var sum=document.getElementById('and-summary');
+  sum.innerHTML=years.map(function(y,i){
+    var yg=G.filter(function(g){return g.anno===y;});
+    var a=average(yg),suff=yg.filter(function(g){return g.value>=6;}).length;
+    var yg1=yg.filter(function(g){return g.quadrimestre===1;}), a1=average(yg1);
+    var yg2=yg.filter(function(g){return g.quadrimestre===2;}), a2=average(yg2);
+    var c=YEAR_COLORS[i%YEAR_COLORS.length];
+    return'<div class="anno-row" style="flex-wrap:wrap;gap:8px">'
+      +'<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:14px;color:'+c+'">'+y+'</div>'
+      +'<div style="font-size:11px;color:var(--mut);margin-top:2px">'+yg.length+' voti · '+suff+' sufficienti</div>'
+      +'<div style="display:flex;gap:10px;margin-top:6px">'
+        +'<span style="font-size:11px;color:#93c5fd">Q1: <b>'+(a1?a1.toFixed(2):'—')+'</b> ('+yg1.length+')</span>'
+        +'<span style="font-size:11px;color:#fcd34d">Q2: <b>'+(a2?a2.toFixed(2):'—')+'</b> ('+yg2.length+')</span>'
+      +'</div></div>'
+      +'<div style="font-family:var(--fd);font-weight:800;font-size:28px;color:'+gradeColor(a)+'">'+(a?a.toFixed(2):'—')+'</div>'
+    +'</div>';
+  }).join('');
+
+  // anni list with delete
+  var al=document.getElementById('anni-list');
+  al.innerHTML='<div class="stitle">ANNI IMPORTATI</div>'+years.map(function(y){
+    var cnt=G.filter(function(g){return g.anno===y;}).length;
+    return'<div class="anno-row">'
+      +'<div><div style="font-weight:600;font-size:14px">'+y+'</div>'
+      +'<div style="font-size:11px;color:var(--mut)">'+cnt+' voti</div></div>'
+      +'<button class="del-imp-btn" data-anno="'+y+'">🗑️ Rimuovi anno</button>'
+    +'</div>';
+  }).join('');
+  al.querySelectorAll('.del-imp-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      var y=this.dataset.anno;
+      G=G.filter(function(g){return g.anno!==y;});
+      saveData();showToast('Anno '+y+' rimosso');renderAndamento();
+    });
+  });
+}
+
+// ── COMPAGNI ──────────────────────────────────────────────────────────────────
+var PEER_COLORS=['#7ba8f7','#a78bfa','#34d399','#fb923c','#f472b6','#38bdf8','#4ade80','#fbbf24'];
+
+function getPeerFiltered(peer){
+  var g=peer.grades.slice();
+  if(CMP_ANNO)g=g.filter(function(x){return(x.anno||guesAnno(x.date))===CMP_ANNO;});
+  if(CMP_QUAD===1)g=g.filter(function(x){return x.quadrimestre===1;});
+  if(CMP_QUAD===2)g=g.filter(function(x){return x.quadrimestre===2;});
+  return g;
+}
+function getMyFiltered(){
+  var g=G.slice();
+  if(CMP_ANNO)g=g.filter(function(x){return(x.anno||guesAnno(x.date))===CMP_ANNO;});
+  if(CMP_QUAD===1)g=g.filter(function(x){return x.quadrimestre===1;});
+  if(CMP_QUAD===2)g=g.filter(function(x){return x.quadrimestre===2;});
+  return g;
+}
+
+function renderCompagni(){
+  // anni filter bar
+  var allAnnos={};
+  G.forEach(function(g){var a=g.anno||guesAnno(g.date);if(a)allAnnos[a]=1;});
+  PEERS.forEach(function(p){p.grades.forEach(function(g){var a=g.anno||guesAnno(g.date);if(a)allAnnos[a]=1;});});
+  var annos=Object.keys(allAnnos).sort();
+  var abar=document.getElementById('cmp-anni-bar');
+  abar.innerHTML='<button class="fchip'+(CMP_ANNO===''?' on':'')+'" id="cmpann-all">Tutti gli anni</button>'
+    +annos.map(function(a){return'<button class="fchip'+(CMP_ANNO===a?' on':'')+'" data-a="'+a+'">'+a+'</button>';}).join('');
+  abar.querySelectorAll('[data-a]').forEach(function(b){b.addEventListener('click',function(){CMP_ANNO=this.dataset.a;renderCompagni();});});
+  var allAnnBtn=document.getElementById('cmpann-all');
+  if(allAnnBtn)allAnnBtn.addEventListener('click',function(){CMP_ANNO='';renderCompagni();});
+  [0,1,2].forEach(function(q){
+    var b=document.getElementById('cmpq'+q);
+    if(b){b.classList.toggle('on',CMP_QUAD===q);b.onclick=function(){CMP_QUAD=q;renderCompagni();};}
+  });
+
+  var myG=getMyFiltered();
+  var myAvg=average(myG);
+  // build people array: me + all peers
+  var people=[{name:'Tu',avg:myAvg,grades:myG,color:'#f5c842',isMe:true}];
+  PEERS.forEach(function(p,i){
+    var pg=getPeerFiltered(p);
+    people.push({name:p.name,avg:average(pg),grades:pg,color:PEER_COLORS[i%PEER_COLORS.length],isMe:false,id:p.id});
+  });
+  people.sort(function(a,b){return(b.avg||0)-(a.avg||0);});
+
+  // overall bars
+  var ob=document.getElementById('cmp-overall');
+  ob.innerHTML=people.map(function(p,rank){
+    var pct=p.avg?((p.avg/10)*100).toFixed(0):0;
+    return'<div class="cmp-bar-row">'
+      +'<div class="cmp-bar-label" style="color:'+(p.isMe?'var(--acc)':'var(--txt)')+';font-weight:'+(p.isMe?'700':'600')+'">'+esc(p.name)+(rank===0?' 🥇':rank===1?' 🥈':rank===2?' 🥉':'')+'</div>'
+      +'<div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:'+pct+'%;background:'+p.color+'"></div></div>'
+      +'<div class="cmp-bar-val" style="color:'+gradeColor(p.avg)+'">'+( p.avg?p.avg.toFixed(2):'—')+'</div>'
+    +'</div>';
+  }).join('');
+
+  // per subject grouped bar chart
+  var allSubjs=[];
+  people.forEach(function(p){p.grades.forEach(function(g){if(allSubjs.indexOf(g.subject)<0)allSubjs.push(g.subject);});});
+  allSubjs.sort();
+  var subjCanvas=document.getElementById('cc-subj');
+  var ex=Chart.getChart(subjCanvas);if(ex)ex.destroy();
+  if(people.length&&allSubjs.length){
+    new Chart(subjCanvas.getContext('2d'),{
+      type:'bar',
+      data:{
+        labels:allSubjs.map(function(s){return s.length>10?s.slice(0,10)+'…':s;}),
+        datasets:people.map(function(p){
+          return{label:p.name,
+            data:allSubjs.map(function(s){var sg=p.grades.filter(function(g){return g.subject===s;});return sg.length?parseFloat(average(sg).toFixed(2)):null;}),
+            backgroundColor:p.color+'bb',borderColor:p.color,borderWidth:1.5,borderRadius:4};
+        })
+      },
+      options:{responsive:true,maintainAspectRatio:false,animation:{duration:400},
+        plugins:{legend:{display:true,labels:{color:'#e0e0f5',font:{size:10},boxWidth:12,padding:8}},
+          tooltip:{backgroundColor:'#1f2040',borderColor:'#252645',borderWidth:1,titleColor:'#e8e8f5',
+            callbacks:{label:function(i){return' '+i.dataset.label+': '+(i.formattedValue||'—');}}}},
+        scales:{
+          x:{grid:{display:false},ticks:{color:'#6b6b8a',font:{size:10}},border:{display:false}},
+          y:{min:1,max:10,grid:{color:'#252645'},ticks:{color:'#6b6b8a'},border:{display:false}}
+        }}
+    });
+  }
+
+  // distribution overlay line chart
+  var distCanvas=document.getElementById('cc-dist');
+  var ex2=Chart.getChart(distCanvas);if(ex2)ex2.destroy();
+  var steps=[1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10];
+  new Chart(distCanvas.getContext('2d'),{
+    type:'line',
+    data:{
+      labels:steps,
+      datasets:people.map(function(p){
+        var tot=p.grades.length;
+        return{label:p.name,
+          data:steps.map(function(s){var cnt=p.grades.filter(function(g){return Math.round(g.value*2)/2===s;}).length;return tot?parseFloat(((cnt/tot)*100).toFixed(1)):0;}),
+          borderColor:p.color,backgroundColor:p.color+'22',
+          pointRadius:3,tension:.4,fill:false,borderWidth:2,spanGaps:true};
+      })
+    },
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:400},
+      plugins:{legend:{display:true,labels:{color:'#e0e0f5',font:{size:10},boxWidth:12,padding:8}},
+        tooltip:{backgroundColor:'#1f2040',borderColor:'#252645',borderWidth:1,titleColor:'#e8e8f5',
+          callbacks:{label:function(i){return' '+i.dataset.label+': '+i.formattedValue+'%';}}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#6b6b8a',font:{size:10}},border:{display:false}},
+        y:{grid:{color:'#252645'},ticks:{color:'#6b6b8a',callback:function(v){return v+'%';}},border:{display:false}}
+      }}
+  });
+
+  // peers list
+  var pl=document.getElementById('peers-list');
+  if(!PEERS.length){
+    pl.innerHTML='<div class="empty" style="padding:20px"><div class="et" style="font-size:14px">Nessun compagno aggiunto</div><div class="es">Importa il CSV di un compagno qui sotto</div></div>';
+  } else {
+    pl.innerHTML=PEERS.map(function(p,i){
+      var pg=getPeerFiltered(p),pa=average(pg);
+      var c=PEER_COLORS[i%PEER_COLORS.length];
+      var initials=p.name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
+      return'<div class="peer-row">'
+        +'<div class="peer-avatar" style="background:'+c+'22;border:2px solid '+c+';color:'+c+'">'+initials+'</div>'
+        +'<div style="flex:1;min-width:0">'
+          +'<div class="peer-name">'+esc(p.name)+'</div>'
+          +'<div class="peer-meta">'+pg.length+' voti · '+p.grades.length+' totali</div>'
+        +'</div>'
+        +'<div class="peer-avg" style="color:'+gradeColor(pa)+'">'+( pa?pa.toFixed(2):'—')+'</div>'
+        +'<button class="del-imp-btn" data-pid="'+p.id+'">Rimuovi</button>'
+      +'</div>';
+    }).join('');
+    pl.querySelectorAll('[data-pid]').forEach(function(b){
+      b.addEventListener('click',function(){
+        PEERS=PEERS.filter(function(p){return p.id!==this.dataset.pid;}.bind(this));
+        savePeers();renderCompagni();showToast('Compagno rimosso');
+      });
+    });
+  }
+}
+
+// ── ADD FORM ──────────────────────────────────────────────────────────────────
+function openAdd(){
+  document.getElementById('fv').value='';
+  document.getElementById('fn').value='';
+  document.getElementById('fd').value=todayStr();
+  document.getElementById('fp').value=100;
+  document.querySelectorAll('#peso-btns .qb').forEach(function(b){b.classList.remove('on');});
+  document.querySelectorAll('.qb').forEach(function(b){b.classList.remove('on');});
+  pickFormQuad(1);
+  openModal('madd');
+}
+
+function pickFormQuad(q){
+  FQ=q;
+  document.getElementById('qc1').classList.toggle('on',q===1);
+  document.getElementById('qc2').classList.toggle('on',q===2);
+}
+
+function submitGrade(){
+  var s=document.getElementById('fs').value;
+  var v=parseFloat(document.getElementById('fv').value);
+  var d=document.getElementById('fd').value||todayStr();
+  var n=(document.getElementById('fn').value||'').trim();
+  var p=parseInt(document.getElementById('fp').value)||100;
+  if(!s||isNaN(v)||v<1||v>10){showToast('⚠️ Voto non valido (1–10)');return;}
+  var anno=(document.getElementById('fanno').value||'').trim()||guesAnno(d);
+  G.push({id:uid(),subject:s,value:v,quadrimestre:FQ,date:d,note:n,peso:p,anno:anno});
+  saveData();closeModal('madd');showToast('✓ Voto aggiunto!');render();
+}
+
+// ── QUICK GRADE BUTTONS ───────────────────────────────────────────────────────
+function buildQQ(){
+  var vals=[4,5,6,6.5,7,7.5,8,9,10];
+  document.getElementById('qqs').innerHTML=vals.map(function(v){
+    return'<button class="qb" data-v="'+v+'">'+v+'</button>';
+  }).join('');
+  document.getElementById('qqs').addEventListener('click',function(e){
+    var btn=e.target.closest('.qb');if(!btn)return;
+    document.getElementById('fv').value=btn.dataset.v;
+    document.querySelectorAll('#qqs .qb').forEach(function(b){b.classList.remove('on');});
+    btn.classList.add('on');
+  });
+  // peso buttons
+  var pesos=[20,50,80,100];
+  document.getElementById('peso-btns').innerHTML=pesos.map(function(p){return'<button class="qb" data-p="'+p+'">'+p+'%</button>';}).join('');
+  document.getElementById('peso-btns').addEventListener('click',function(e){
+    var btn=e.target.closest('.qb');if(!btn)return;
+    document.getElementById('fp').value=btn.dataset.p;
+    document.querySelectorAll('#peso-btns .qb').forEach(function(b){b.classList.remove('on');});
+    btn.classList.add('on');
+  });
+}
+
+// ── EXPORT / IMPORT ───────────────────────────────────────────────────────────
+function dlBlob(blob,fname){
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download=fname;a.click();
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+}
+
+function expJSON(){
+  dlBlob(new Blob([JSON.stringify({version:1,exportDate:new Date().toISOString(),grades:G},null,2)],{type:'application/json'}),'voti_'+todayStr()+'.json');
+  showToast('⬇️ JSON esportato!');
+}
+
+function expCSV(){
+  var rows=[['Materia','Voto','Quadrimestre','Data','Note','Peso','Anno']];
+  G.forEach(function(g){rows.push([g.subject,g.value,g.quadrimestre,g.date,g.note||'',g.peso!=null?g.peso:100,g.anno||guesAnno(g.date)]);});
+  var csv=rows.map(function(r){return r.map(function(c){return'"'+c+'"';}).join(',');}).join('\n');
+  dlBlob(new Blob([csv],{type:'text/csv'}),'voti_'+todayStr()+'.csv');
+  showToast('📄 CSV esportato!');
+}
+
+function handleImport(e){
+  var file=e.target.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      var text=ev.target.result;
+      if(file.name.endsWith('.json')){
+        var data=JSON.parse(text);
+        var imp=data.grades||(Array.isArray(data)?data:[]);
+        var ids={};G.forEach(function(g){ids[g.id]=1;});
+        var fresh=imp.filter(function(g){return!ids[g.id];});
+        G=G.concat(fresh);saveData();render();showToast('⬆️ Importati '+fresh.length+' voti!');
+      }else if(file.name.endsWith('.csv')){
+        var lines=text.trim().split('\n').slice(1);
+        var imp=[];
+        lines.forEach(function(l){
+          var cols=l.split(',').map(function(c){return c.replace(/^"|"$/g,'').trim();});
+          var g={id:uid(),subject:cols[0],value:parseFloat(cols[1]),quadrimestre:parseInt(cols[2]),date:cols[3],note:cols[4]||'',peso:cols[5]?parseInt(cols[5]):100,anno:cols[6]||guesAnno(cols[3])};
+          if(g.subject&&!isNaN(g.value))imp.push(g);
+        });
+        G=G.concat(imp);saveData();render();showToast('⬆️ Importati '+imp.length+' voti dal CSV!');
+      }
+    }catch(err){showToast('❌ Errore importazione');}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+function handleImportWithAnno(e, forceAnno){
+  var file=e.target.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      var text=ev.target.result;
+      var imp=[];
+      if(file.name.endsWith('.json')){
+        var data=JSON.parse(text);
+        imp=data.grades||(Array.isArray(data)?data:[]);
+      }else{
+        var lines=text.trim().split('\n').slice(1);
+        lines.forEach(function(l){
+          var cols=l.split(',').map(function(c){return c.replace(/^"|"$/g,'').trim();});
+          var g={id:uid(),subject:cols[0],value:parseFloat(cols[1]),quadrimestre:parseInt(cols[2]),date:cols[3],note:cols[4]||'',peso:cols[5]?parseInt(cols[5]):100,anno:cols[6]||guesAnno(cols[3])};
+          if(g.subject&&!isNaN(g.value))imp.push(g);
+        });
+      }
+      // override anno if forced
+      if(forceAnno){imp.forEach(function(g){g.anno=forceAnno;});}
+      else{imp.forEach(function(g){if(!g.anno)g.anno=guesAnno(g.date);});}
+      // assign new ids to avoid collisions
+      imp.forEach(function(g){g.id=uid();});
+      G=G.concat(imp);saveData();render();
+      showToast('⬆️ Anno '+forceAnno+': '+imp.length+' voti importati!');
+    }catch(err){showToast('❌ Errore importazione');}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+function shareIt(){
+  var data=JSON.stringify({version:1,grades:G},null,2);
+  if(navigator.share){
+    navigator.share({title:'I miei voti',text:data}).catch(function(){});
+    return;
+  }
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(data).then(function(){showToast('📋 Copiato negli appunti!');}).catch(function(){showToast('❌ Non disponibile');});
+  }else{showToast('❌ Condivisione non disponibile');}
+}
+
+// ── WIRE UP EVENTS ────────────────────────────────────────────────────────────
+function init(){
+  loadData();
+  loadPeers();
+  buildQQ();
+
+  // Tab nav
+  document.getElementById('nb-home').addEventListener('click',function(){goTab('home');});
+  document.getElementById('nb-voti').addEventListener('click',function(){goTab('voti');});
+  document.getElementById('nb-grafici').addEventListener('click',function(){goTab('grafici');});
+
+  // Quad filter
+  document.getElementById('qt0').addEventListener('click',function(){setQuad(0);});
+  document.getElementById('qt1').addEventListener('click',function(){setQuad(1);});
+  document.getElementById('qt2').addEventListener('click',function(){setQuad(2);});
+
+  // Add
+  document.getElementById('btnAdd').addEventListener('click',openAdd);
+  document.getElementById('btnCloseAdd').addEventListener('click',function(){closeModal('madd');});
+  document.getElementById('btnSubmit').addEventListener('click',submitGrade);
+  document.getElementById('madd').addEventListener('click',function(e){if(e.target===this)closeModal('madd');});
+
+  // Quad form buttons
+  document.getElementById('qc1').addEventListener('click',function(){pickFormQuad(1);});
+  document.getElementById('qc2').addEventListener('click',function(){pickFormQuad(2);});
+
+  // Export/Import
+  document.getElementById('btnExpJ').addEventListener('click',expJSON);
+  document.getElementById('btnExpC').addEventListener('click',expCSV);
+  document.getElementById('btnImp').addEventListener('click',function(){document.getElementById('fi').click();});
+  document.getElementById('fi').addEventListener('change',handleImport);
+  document.getElementById('btnShr').addEventListener('click',shareIt);
+
+  // Delete all
+  document.getElementById('btnDelAll').addEventListener('click',function(){openModal('mconfirm');});
+  document.getElementById('btnConfNo').addEventListener('click',function(){closeModal('mconfirm');});
+  document.getElementById('btnConfYes').addEventListener('click',function(){
+    G=[];saveData();closeModal('mconfirm');showToast('🗑️ Tutti i voti eliminati');render();
+  });
+
+  // Andamento tab
+  document.getElementById('nb-andamento').addEventListener('click',function(){goTab('andamento');});
+
+  // sub-tabs
+  document.getElementById('stab-trend').addEventListener('click',function(){
+    AND_VIEW='trend';
+    document.getElementById('stab-trend').classList.add('on');
+    document.getElementById('stab-compagni').classList.remove('on');
+    document.getElementById('and-trend-view').style.display='block';
+    document.getElementById('and-compagni-view').style.display='none';
+    renderAndamento();
+  });
+  document.getElementById('stab-compagni').addEventListener('click',function(){
+    AND_VIEW='compagni';
+    document.getElementById('stab-compagni').classList.add('on');
+    document.getElementById('stab-trend').classList.remove('on');
+    document.getElementById('and-trend-view').style.display='none';
+    document.getElementById('and-compagni-view').style.display='block';
+    renderCompagni();
+  });
+
+  // add peer
+  document.getElementById('btnAddPeer').addEventListener('click',function(){
+    var name=(document.getElementById('peer-name-inp').value||'').trim();
+    if(!name){showToast('Inserisci il nome del compagno');return;}
+    document.getElementById('fi-peer').dataset.pname=name;
+    document.getElementById('fi-peer').dataset.panno=(document.getElementById('peer-anno-inp').value||'').trim();
+    document.getElementById('fi-peer').click();
+  });
+  document.getElementById('fi-peer').addEventListener('change',function(e){
+    var file=e.target.files[0];if(!file)return;
+    var pname=this.dataset.pname||'Compagno';
+    var panno=this.dataset.panno||'';
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      try{
+        var text=ev.target.result,imp=[];
+        if(file.name.endsWith('.json')){
+          var data=JSON.parse(text);
+          imp=data.grades||(Array.isArray(data)?data:[]);
+        } else {
+          var lines=text.trim().split('\n').slice(1);
+          lines.forEach(function(l){
+            var cols=l.split(',').map(function(c){return c.replace(/^"|"$/g,'').trim();});
+            var g={id:uid(),subject:cols[0],value:parseFloat(cols[1]),quadrimestre:parseInt(cols[2]),date:cols[3],note:cols[4]||'',peso:cols[5]?parseInt(cols[5]):100,anno:cols[6]||guesAnno(cols[3])};
+            if(g.subject&&!isNaN(g.value))imp.push(g);
+          });
+        }
+        if(panno)imp.forEach(function(g){g.anno=panno;});
+        imp.forEach(function(g){g.id=uid();});
+        PEERS.push({id:uid(),name:pname,grades:imp});
+        savePeers();
+        document.getElementById('peer-name-inp').value='';
+        document.getElementById('peer-anno-inp').value='';
+        showToast(pname+' aggiunto! ('+imp.length+' voti)');
+        renderCompagni();
+      }catch(err){showToast('Errore importazione');}
+    };
+    reader.readAsText(file);
+    e.target.value='';
+  });
+
+  // export for peer sharing
+  document.getElementById('btnExpForPeer').addEventListener('click',function(){
+    var rows=[['Materia','Voto','Quadrimestre','Data','Note','Peso','Anno']];
+    G.forEach(function(g){rows.push([g.subject,g.value,g.quadrimestre,g.date,g.note||'',g.peso!=null?g.peso:100,g.anno||guesAnno(g.date)]);});
+    var csv=rows.map(function(r){return r.map(function(c){return'"'+c+'"';}).join(',');}).join('\n');
+    var blob=new Blob([csv],{type:'text/csv'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');a.href=url;a.download='miei_voti_'+todayStr()+'.csv';a.click();
+    setTimeout(function(){URL.revokeObjectURL(url);},1000);
+    showToast('CSV esportato! Mandalo ai tuoi compagni');
+  });
+
+  // Import anno
+  document.getElementById('btnImpAnno').addEventListener('click',function(){
+    var anno=(document.getElementById('imp-anno').value||'').trim();
+    if(!anno){showToast('⚠️ Inserisci l\'anno scolastico prima');return;}
+    document.getElementById('fi-anno').dataset.anno=anno;
+    document.getElementById('fi-anno').click();
+  });
+  document.getElementById('fi-anno').addEventListener('change',function(e){
+    var targetAnno=this.dataset.anno||'';
+    handleImportWithAnno(e,targetAnno);
+  });
+
+  // ClasseViva
+  document.getElementById('btnCV').addEventListener('click',function(){openModal('mcv');});
+  document.getElementById('btnCloseCV').addEventListener('click',function(){closeModal('mcv');});
+  document.getElementById('mcv').addEventListener('click',function(e){if(e.target===this)closeModal('mcv');});
+
+  render();
+}
+
+init();
+
+})();
+</script>
+</body>
+</html>
