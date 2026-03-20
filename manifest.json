@@ -1,7 +1,7 @@
 {
   "name": "VoteAnalyzer",
   "short_name": "Vote",
-  "start_url": "./index.html",
+  "start_url": "./app.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
