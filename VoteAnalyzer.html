@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b0c18">
+<title>VotiApp</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0c18;--surf:#191a30;--surf2:#0f1022;--brd:#252645;
+  --acc:#f5c842;--txt:#e0e0f5;--mut:#5a5a7a;
+  --ok:#22c55e;--err:#ef4444;
+  --ff:'DM Sans',sans-serif;--fd:'Syne',sans-serif;
+  --sab:env(safe-area-inset-bottom,0px);
+}
+html,body{background:var(--bg);color:var(--txt);font-family:var(--ff);height:100%;-webkit-font-smoothing:antialiased}
+#app{max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:calc(76px + var(--sab))}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--brd);border-radius:2px}
+
+/* HEADER */
+#hdr{background:var(--surf2);padding:14px 18px 12px;border-bottom:1px solid var(--brd);
+  position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--fd);font-weight:800;font-size:22px;color:var(--acc)}
+.sub{font-size:11px;color:var(--mut);margin-top:1px}
+.qtabs{display:flex;background:var(--surf);border-radius:22px;padding:4px;gap:2px}
+.qtab{padding:6px 12px;border-radius:18px;border:none;cursor:pointer;font-size:12px;font-weight:700;
+  background:transparent;color:var(--mut);font-family:var(--ff);transition:all .2s}
+.qtab.on{background:var(--acc);color:#0b0c18}
+
+/* NAV */
+#nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;
+  background:var(--surf2);border-top:1px solid var(--brd);display:flex;z-index:30;
+  padding-bottom:var(--sab)}
+.nbtn{flex:1;padding:10px 0 7px;border:none;background:transparent;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  color:var(--mut);font-family:var(--ff);transition:color .2s}
+.nbtn.on{color:var(--acc)}
+.ni{font-size:20px}.nl{font-size:10px;font-weight:700}
+.addwrap{flex:1;display:flex;flex-direction:column;align-items:center;padding:0 0 7px}
+.addbtn{width:40px;height:40px;border-radius:50%;background:var(--acc);border:none;
+  font-size:26px;color:#0b0c18;font-weight:800;cursor:pointer;margin-top:-12px;
+  box-shadow:0 4px 20px rgba(245,200,66,.5);display:flex;align-items:center;justify-content:center}
+.addlbl{font-size:10px;font-weight:700;color:var(--acc);margin-top:2px;font-family:var(--ff)}
+
+/* CONTENT */
+#content{padding:14px 14px 0}
+.page{display:none}.page.on{display:block}
+
+/* CARD */
+.card{background:var(--surf);border-radius:16px;padding:14px 16px;border:1px solid var(--brd);margin-bottom:12px}
+.stitle{font-size:11px;font-weight:700;color:var(--mut);letter-spacing:2px;margin-bottom:10px;margin-top:4px}
+
+/* HOME */
+.bigcard{text-align:center;padding:22px 16px;background:linear-gradient(135deg,var(--surf),#1f2040)}
+.biglbl{font-size:11px;color:var(--mut);font-weight:700;letter-spacing:2px;margin-bottom:6px}
+.bigval{font-family:var(--fd);font-weight:800;font-size:56px;line-height:1}
+.bigsub{font-size:13px;color:var(--mut);margin-top:6px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.mcard{background:var(--surf);border-radius:16px;padding:12px 14px;border:1px solid var(--brd);text-align:center}
+.mlbl{font-size:10px;color:var(--mut);font-weight:700;letter-spacing:1.5px;margin-bottom:4px}
+.mval{font-family:var(--fd);font-weight:800;font-size:28px}
+.msub{font-size:11px;color:#4a4a6a;margin-top:2px}
+.srow{background:var(--surf);border-radius:14px;padding:10px 14px;margin-bottom:6px;
+  display:flex;align-items:center;justify-content:space-between;border:1px solid var(--brd)}
+.sname{font-weight:600;font-size:14px}.scnt{font-size:11px;color:var(--mut)}
+.savg{font-family:var(--fd);font-weight:800;font-size:24px}
+.agrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.abtn{background:var(--surf);border:1px solid var(--brd);border-radius:14px;padding:13px 10px;
+  cursor:pointer;color:var(--txt);display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:13px;font-weight:500;font-family:var(--ff)}
+.abtn:active{background:#252645}
+.cvbtn{width:100%;background:linear-gradient(135deg,#1c1e3a,#252550);border:1px solid #3a3a6a;
+  border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;
+  margin-bottom:20px;text-align:left}
+.empty{text-align:center;padding:50px 20px;color:var(--mut)}
+.ei{font-size:52px;margin-bottom:10px}
+.et{font-family:var(--fd);font-weight:700;font-size:18px;margin-bottom:6px;color:var(--txt)}
+.es{font-size:14px}
+
+/* VOTI */
+.grow{background:var(--surf);border-radius:14px;padding:12px;margin-bottom:8px;
+  display:flex;align-items:center;gap:12px;border:1px solid var(--brd)}
+.gcirc{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--fd);font-weight:800;font-size:17px;flex-shrink:0}
+.gsub{font-weight:600;font-size:15px}
+.gmeta{font-size:11px;color:var(--mut);display:flex;gap:10px;margin-top:4px;flex-wrap:wrap}
+.chip{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.delbtn{background:rgba(239,68,68,.12);border:none;color:#f87171;width:34px;height:34px;
+  border-radius:10px;cursor:pointer;font-size:15px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center}
+
+/* GRAFICI */
+.drow{display:grid;grid-template-columns:36px 1fr 36px 60px;align-items:center;
+  padding:6px 4px;border-bottom:1px solid var(--brd)}
+.dgrade{font-family:var(--fd);font-weight:800;font-size:15px}
+.dbw{background:#252645;border-radius:3px;height:6px;overflow:hidden}
+.dbar{height:100%;border-radius:3px;transition:width .6s ease}
+.dcnt{text-align:center;font-weight:700;font-size:14px}
+.dpct{text-align:right;font-size:12px;color:var(--mut)}
+
+/* MODAL BOTTOM SHEET */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;
+  z-index:100;opacity:0;pointer-events:none;transition:opacity .25s}
+.overlay.on{opacity:1;pointer-events:all}
+.mbox{width:100%;max-width:480px;margin:0 auto;background:var(--surf);
+  border-radius:24px 24px 0 0;padding:24px 20px calc(28px + var(--sab));
+  max-height:92vh;overflow-y:auto;
+  transform:translateY(100%);transition:transform .3s cubic-bezier(.32,0,.15,1)}
+.overlay.on .mbox{transform:translateY(0)}
+
+/* MODAL CENTER */
+.cov{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;
+  justify-content:center;z-index:100;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .25s}
+.cov.on{opacity:1;pointer-events:all}
+.cbox{background:var(--surf);border-radius:20px;padding:24px;max-width:400px;width:100%;
+  transform:scale(.9);transition:transform .25s}
+.cov.on .cbox{transform:scale(1)}
+
+.mtitle{font-family:var(--fd);font-weight:700;font-size:20px}
+.mclose{background:#252645;border:none;color:#8888aa;width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:18px}
+.mhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.flbl{font-size:11px;color:var(--mut);font-weight:700;letter-spacing:1.5px;display:block;margin-bottom:7px}
+.fg{margin-bottom:16px}
+select,input[type=text],input[type=number],input[type=date]{
+  width:100%;padding:13px 14px;background:#0f1022;border:1px solid var(--brd);
+  border-radius:12px;color:var(--txt);font-size:15px;outline:none;font-family:var(--ff);-webkit-appearance:none}
+select option{background:var(--surf)}
+input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1) opacity(.4)}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+.qqs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.qb{padding:5px 11px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;
+  font-family:var(--ff);background:#252645;border:1px solid #2e2e50;color:#8888aa}
+.qb.on{background:rgba(245,200,66,.2);border-color:var(--acc);color:var(--acc)}
+.qcs{display:flex;gap:10px}
+.qc{flex:1;padding:12px;border:2px solid var(--brd);border-radius:12px;background:transparent;
+  color:#6b6b8a;cursor:pointer;font-weight:700;font-size:14px;font-family:var(--ff)}
+.qc.on{border-color:var(--acc);background:rgba(245,200,66,.1);color:var(--acc)}
+.sbmt{width:100%;padding:15px;background:var(--acc);border:none;border-radius:14px;
+  color:#0b0c18;font-family:var(--fd);font-weight:800;font-size:17px;cursor:pointer;margin-top:24px}
+
+/* TOAST */
+#toast{position:fixed;top:68px;left:50%;transform:translateX(-50%) translateY(-10px);
+  background:var(--ok);color:#fff;padding:9px 22px;border-radius:24px;font-size:13px;
+  font-weight:600;z-index:999;white-space:nowrap;
+  opacity:0;transition:all .25s;pointer-events:none}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+button:active{opacity:.85}
+/* FILTER BAR */
+.fbar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;align-items:center}
+.fchip{padding:5px 13px;border-radius:20px;border:1px solid var(--brd);background:transparent;
+  color:var(--mut);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--ff);white-space:nowrap}
+.fchip.on{border-color:var(--acc);background:rgba(245,200,66,.15);color:var(--acc)}
+.fchip.on2{border-color:#7ba8f7;background:rgba(123,168,247,.15);color:#7ba8f7}
+.fsep{width:1px;height:20px;background:var(--brd);flex-shrink:0}
+/* ANDAMENTO */
+.anno-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 12px 4px 10px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid;margin-bottom:6px;margin-right:4px}
+.anno-row{background:var(--surf);border-radius:14px;padding:11px 14px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;border:1px solid var(--brd)}
+.del-imp-btn{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#f87171;border-radius:10px;padding:5px 10px;cursor:pointer;font-size:12px;font-weight:600;font-family:var(--ff)}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- HEADER -->
+<div id="hdr">
+  <div><div class="logo">📚 VotiApp</div><div class="sub">Registro voti personale</div></div>
+  <div class="qtabs">
+    <button class="qtab on" id="qt0">Tutti</button>
+    <button class="qtab"    id="qt1">Q1</button>
+    <button class="qtab"    id="qt2">Q2</button>
+  </div>
+</div>
+
+<!-- PAGES -->
+<div id="content">
+
+  <!-- HOME -->
+  <div id="p-home" class="page on">
+    <div class="card bigcard">
+      <div class="biglbl" id="avglbl">MEDIA GENERALE</div>
+      <div class="bigval" id="avgval">—</div>
+      <div class="bigsub" id="avgsub">0 voti registrati</div>
+    </div>
+    <div class="g2">
+      <div class="mcard"><div class="mlbl">1° QUADRIMESTRE</div><div class="mval" id="a1">—</div><div class="msub" id="c1">0 voti</div></div>
+      <div class="mcard"><div class="mlbl">2° QUADRIMESTRE</div><div class="mval" id="a2">—</div><div class="msub" id="c2">0 voti</div></div>
+    </div>
+    <div id="ss" style="display:none"><div class="stitle">MEDIE PER MATERIA</div><div id="sl"></div></div>
+    <div class="stitle">GESTIONE DATI</div>
+    <div class="agrid">
+      <button class="abtn" id="btnExpJ">⬇️ Esporta JSON</button>
+      <button class="abtn" id="btnExpC">📄 Esporta CSV</button>
+      <button class="abtn" id="btnImp">⬆️ Importa</button>
+      <button class="abtn" id="btnShr">🔗 Condividi</button>
+      <button class="abtn" id="btnDelAll" style="grid-column:1/-1;color:#f87171;border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.07)">🗑️ Elimina tutti i voti</button>
+    </div>
+    <input id="fi" type="file" accept=".json,.csv" style="display:none">
+    <button class="cvbtn" id="btnCV">
+      <span style="font-size:34px">🏫</span>
+      <div><div style="font-weight:600;font-size:15px;color:var(--txt)">Connetti ClasseViva</div><div style="font-size:12px;color:var(--mut)">Importa voti automaticamente</div></div>
+      <span style="margin-left:auto;color:var(--mut);font-size:18px">›</span>
+    </button>
+    <div id="hempty" class="empty"><div class="ei">📝</div><div class="et">Nessun voto ancora</div><div class="es">Premi + in basso per aggiungere il primo voto!</div></div>
+  </div>
+
+  <!-- VOTI -->
+  <div id="p-voti" class="page">
+    <div id="vtitle" class="stitle">0 VOTI TOTALI</div>
+    <div id="vlist"></div>
+    <div id="vempty" class="empty" style="display:none"><div class="ei">📋</div><div class="et">Nessun voto</div><div class="es">Aggiungi il tuo primo voto!</div></div>
+  </div>
+
+  <!-- GRAFICI -->
+  <div id="p-grafici" class="page">
+    <div id="gempty" class="empty" style="display:none"><div class="ei">📊</div><div class="et">Nessun dato</div><div class="es">Aggiungi voti per vedere le statistiche</div></div>
+    <div id="gcont">
+      <!-- FILTER BAR -->
+      <div id="gf-bar" style="margin-bottom:4px">
+        <div class="stitle" style="margin-bottom:6px">FILTRA PER ANNO</div>
+        <div class="fbar" id="gf-anni"></div>
+        <div class="stitle" style="margin-bottom:6px;margin-top:8px">FILTRA PER QUADRIMESTRE</div>
+        <div class="fbar">
+          <button class="fchip on" id="gfq0">Tutti</button>
+          <button class="fchip"    id="gfq1">1° Quad</button>
+          <button class="fchip"    id="gfq2">2° Quad</button>
+        </div>
+        <div class="stitle" style="margin-bottom:6px;margin-top:8px">CONFRONTO ANNI SELEZIONATI</div>
+        <div class="fbar" id="gf-compare-bar" style="display:none"></div>
+      </div>
+      <div class="card bigcard"><div class="biglbl">MEDIA GENERALE</div><div class="bigval" id="gavg">—</div><div class="bigsub" id="gsub2">0 voti</div></div>
+      <div class="g2">
+        <div class="mcard"><div class="mlbl">SUFFICIENTI</div><div class="mval" id="gsp" style="color:#22c55e">0%</div><div class="msub" id="gsc">0 voti ≥ 6</div></div>
+        <div class="mcard"><div class="mlbl">INSUFFICIENTI</div><div class="mval" id="gip" style="color:#ef4444">0%</div><div class="msub" id="gic">0 voti &lt; 6</div></div>
+      </div>
+      <div class="card"><div class="stitle">DISTRIBUZIONE VOTI</div><div style="position:relative;height:160px"><canvas id="bc"></canvas></div></div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div class="stitle" style="margin:0">TABELLA DETTAGLIATA</div>
+          <span style="font-size:11px;color:var(--mut);font-weight:700" id="gtot">TOT: 0</span>
+        </div>
+        <div style="display:grid;grid-template-columns:36px 1fr 36px 60px;font-size:10px;color:#4a4a6a;font-weight:700;letter-spacing:1.5px;padding:0 4px;margin-bottom:6px">
+          <span>VOTO</span><span></span><span style="text-align:center">N°</span><span style="text-align:right">%</span>
+        </div>
+        <div id="dtbl"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ANDAMENTO -->
+  <div id="p-andamento" class="page">
+    <div id="and-empty" class="empty" style="display:none"><div class="ei">📈</div><div class="et">Nessun dato</div><div class="es">Importa voti di almeno un anno scolastico per vedere l'andamento</div></div>
+    <div id="and-cont">
+      <div class="card" style="background:linear-gradient(135deg,var(--surf),#1f2040);text-align:center;padding:18px 16px">
+        <div class="biglbl">ANNI SCOLASTICI</div>
+        <div id="and-anni" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-top:8px"></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div class="stitle" style="margin:0">ANDAMENTO MEDIA GENERALE</div>
+        </div>
+        <div class="fbar" style="margin-bottom:10px">
+          <button class="fchip on" id="aqm-all">Tutti</button>
+          <button class="fchip"    id="aqm-q1">Solo Q1</button>
+          <button class="fchip"    id="aqm-q2">Solo Q2</button>
+          <div class="fsep"></div>
+          <button class="fchip"    id="aqm-cmp">Q1 vs Q2</button>
+        </div>
+        <div style="position:relative;height:200px"><canvas id="lc-gen"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="stitle">CONFRONTO PER MATERIA</div>
+        <div id="and-subj-sel" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
+        <div style="position:relative;height:200px"><canvas id="lc-subj"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="stitle">RIEPILOGO PER ANNO</div>
+        <div id="and-summary"></div>
+      </div>
+      <div class="stitle">IMPORTA ANNO SCOLASTICO</div>
+      <div class="card" style="padding:14px">
+        <div class="fg" style="margin-bottom:10px"><label class="flbl">ANNO (es. 2023/24)</label><input type="text" id="imp-anno" placeholder="2023/24"></div>
+        <button class="abtn" id="btnImpAnno" style="width:100%;justify-content:center">⬆️ Importa CSV per questo anno</button>
+        <input id="fi-anno" type="file" accept=".csv,.json" style="display:none">
+      </div>
+      <div id="anni-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NAV -->
+<div id="nav">
+  <button class="nbtn on" id="nb-home"><span class="ni">🏠</span><span class="nl">Home</span></button>
+  <button class="nbtn"    id="nb-voti"><span class="ni">📋</span><span class="nl">Voti</span></button>
+  <div class="addwrap"><button class="addbtn" id="btnAdd">+</button><span class="addlbl">Aggiungi</span></div>
+  <button class="nbtn"    id="nb-grafici"><span class="ni">📊</span><span class="nl">Grafici</span></button>
+  <button class="nbtn"    id="nb-andamento"><span class="ni">📈</span><span class="nl">Andamento</span></button>
+</div>
+
+</div><!-- /app -->
+<div id="toast"></div>
+
+<!-- CONFIRM DELETE ALL -->
+<div id="mconfirm" class="cov">
+  <div class="cbox" style="max-width:340px">
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="font-size:44px">⚠️</div>
+      <div style="font-family:var(--fd);font-weight:700;font-size:19px;margin-top:10px">Elimina tutti i voti?</div>
+      <div style="font-size:13px;color:var(--mut);margin-top:8px;line-height:1.6">Questa azione è irreversibile.<br>Tutti i voti salvati verranno cancellati.</div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button id="btnConfNo"  style="flex:1;padding:13px;background:#252645;border:none;border-radius:12px;color:var(--txt);cursor:pointer;font-weight:600;font-size:15px;font-family:var(--ff)">Annulla</button>
+      <button id="btnConfYes" style="flex:1;padding:13px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);border-radius:12px;color:#f87171;cursor:pointer;font-weight:700;font-size:15px;font-family:var(--ff)">Elimina tutto</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD MODAL -->
+<div id="madd" class="overlay">
+  <div class="mbox">
+    <div class="mhdr"><span class="mtitle">Aggiungi Voto</span><button class="mclose" id="btnCloseAdd">✕</button></div>
+    <div class="fg"><label class="flbl">MATERIA</label>
+      <select id="fs">
+        <option>Matematica</option><option>Italiano</option><option>Storia</option><option>Inglese</option>
+        <option>Scienze</option><option>Arte</option><option>Musica</option><option>Ed. Fisica</option>
+        <option>Tecnologia</option><option>Religione</option><option>Filosofia</option><option>Fisica</option>
+        <option>Latino</option><option>Greco</option><option>Chimica</option><option>Informatica</option>
+        <option>Altro</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label class="flbl">VOTO (1–10)</label>
+      <input type="number" id="fv" min="1" max="10" step="0.5" placeholder="es. 7.5">
+      <div class="qqs" id="qqs"></div>
+    </div>
+    <div class="fg"><label class="flbl">QUADRIMESTRE</label>
+      <div class="qcs">
+        <button class="
